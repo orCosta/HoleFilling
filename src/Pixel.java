@@ -1,3 +1,8 @@
+/**
+ * This class represent 2D Pixel for ImProLibLite use.
+ * The pixel contains the x and y indexes, and value.
+ * 2 pixels consider to be equals if they point to the same position in the image.
+ */
 public class Pixel {
     int x;
     int y;
