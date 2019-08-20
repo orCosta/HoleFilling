@@ -11,7 +11,7 @@ public class CmdUtils {
         Mat mask = Imgcodecs.imread("externals/star_mask.png", Imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
         Mat im1 = new Mat();
         ImProLibLite.carveHoleUsingMask(src, mask, im1);
-
+        ImProLibLite.fillHole(im1);
         System.out.println(im1.dump());
 
     }

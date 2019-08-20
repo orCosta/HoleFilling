@@ -1,22 +1,19 @@
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
-
 import java.util.HashSet;
-
 import static java.lang.Math.*;
 
 
 public class ImProLibLite {
+    // Compulsory line for OpenCv
+    static{ System.loadLibrary(Core.NATIVE_LIBRARY_NAME); }
+
     public static enum ConnectivityType
     {
         C8, // 8-neighbors connectivity
         C4; // 4-neighbors connectivity
     }
-
-
-    // Compulsory line for OpenCv
-    static{ System.loadLibrary(Core.NATIVE_LIBRARY_NAME); }
 
     /**
      * Carve an hole in the given image using the mask.
@@ -87,8 +84,10 @@ public class ImProLibLite {
         return bounds;
     }
 
-    private static void fillHole(Mat im, HashSet<Pixel> bound, WeightingFunc wf)
+    public static void fillHole(Mat im)
     {
+        HashSet<Pixel> bound = findBoundary(im, ConnectivityType.C8);
+        WeightingFunc wf = new WeightingFunc(2, 1);
         Size s = im.size();
         for (int i = 0; i < s.height; i++) {
             for (int j = 0; j < s.width; j++) {
@@ -105,12 +104,13 @@ public class ImProLibLite {
                 }
             }
         }
+        reconvertAndSave(im);
     }
 
     private  static void reconvertAndSave(Mat im){
         Core.multiply(im, new Scalar(255), im);
         im.convertTo(im, CvType.CV_8UC1);
-        Imgcodecs.imwrite("externals/test1.jpg", im);
+        Imgcodecs.imwrite("externals/test2.jpg", im);
     }
 
     public static void main(String[] args) {
