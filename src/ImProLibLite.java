@@ -189,6 +189,34 @@ public class ImProLibLite {
     }
 
     /**
+     * Q2
+     * Approximate method that fo over all the nearest neighbors.
+     */
+    public static void fillHoleQ2(Mat im, ConnectivityType t, int z, float eps){
+        WeightingDefaultFunc wf = new WeightingDefaultFunc(z, eps);
+        float fixWeight = wf.getWeight(new Pixel(1, 1), new Pixel(2, 2));
+        HashSet<Pixel> bound = findHoleBoundary(im, t);
+        NeighborsGetter ng = createNeighborsGetter(t);
+        Size s = im.size();
+        for (int i = 0; i < s.height; i++) {
+            for (int j = 0; j < s.width; j++) {
+                double[] val = im.get(i, j);
+                if (val[0] == (-1)){
+                    double numeratorSum = 0;
+                    double denominatorSum = 0;
+                    for (Pixel p : ng.getNeighbors(new Pixel(i, j), im)){
+                        if (p.getValue() != -1){
+                            denominatorSum += fixWeight;
+                            numeratorSum += (fixWeight * p.getValue());
+                        }
+                    }
+                    im.put(i, j, (numeratorSum/denominatorSum));
+                }
+            }
+        }
+    }
+
+    /**
      * Get GrayScale image with 0-1 values, CV_32FC1 type
      * and convert it to 0-255 scale and CV_8UC1 type.
      */

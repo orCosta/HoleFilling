@@ -95,35 +95,32 @@ public class CmdUtils {
         }
     }
 
-
     public static void main(String[] args) {
         parseArgs(args);
         if (!validateInput()){
             return;
         }
-        System.out.println(filePath);
-        System.out.println(z);
-        System.out.println(epsilon);
-        System.out.println(connectivityType);
-        System.out.println(maskPath);
-
+        System.out.println("Running the filling hole for:" +filePath+ " with the mask:" + maskPath
+                + "| z:"+ z + " | eps:" + epsilon+ " | connectivity:" + connectivityType);
         Mat src = Imgcodecs.imread(filePath, Imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
         Mat mask = Imgcodecs.imread(maskPath, Imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
         if (mask.empty() || src.empty()){
             System.err.println("Error: invalid format for image/mask");
         }
+        if (src.size().width != mask.size().width || src.size().height != mask.size().height){
+            System.err.println("Error: Image and mask must have the same dimensions");
+        }
         Mat im1 = new Mat();
-        System.out.println("carve a hole");
         ImProLibLite.carveHoleUsingMask(src, mask, im1);
         if (connectivityType == 8){
-            System.out.println("fill with 8");
             ImProLibLite.fillHole(im1, ImProLibLite.ConnectivityType.C8, z, epsilon);
+            //Q2:
+//            ImProLibLite.fillHoleQ2(im1, ImProLibLite.ConnectivityType.C8, z, epsilon);
         } else { // connectivityType == 4 :
-            System.out.println("fill with 4");
             ImProLibLite.fillHole(im1, ImProLibLite.ConnectivityType.C4, z, epsilon);
         }
         ImProLibLite.reconvertNormalizedImage(im1);
         Imgcodecs.imwrite("externals/result_" + fileName, im1);
-        System.out.println(im1.dump());
+        System.out.println("result was saved in Externals under the name: " + "result_"+fileName);
     }
 }
